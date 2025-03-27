@@ -40,7 +40,6 @@ void Widget::Row(){
 
     while (lolkek){
         int sbdeleted;
-        qDebug()<<"SOMETHING SHOULD BE DELETED";
         for (int i=0; i<20; i++){
             goidap=true;
             for (int j=0; j<10; j++){
@@ -52,7 +51,6 @@ void Widget::Row(){
             }
 
         }
-        qDebug()<<"Ok1?";
         qDebug()<<(sbdeleted);
         //мы нашли строчку, которую надо бы удалить
         for (int j=0; j<10; j++){
@@ -60,7 +58,6 @@ void Widget::Row(){
         }
 
         //мы вроде бы ее удалили
-        qDebug()<<"Ok2?";
         for(int i=sbdeleted-1; i>=0; i--){
             for (int j=0; j<10; j++){
                 if (goida[i][j]->IsColidable){
@@ -70,8 +67,6 @@ void Widget::Row(){
             }
         }
         //мы вроде бы все сместили
-
-        qDebug()<<"Ok3";
         lolkek=false;
         goidap=true;
         for (int i=0; i<20; i++){
@@ -145,6 +140,12 @@ void Widget::keyPressEvent(QKeyEvent *event) {
 
         fullrotate();
         break;
+    case Qt::Key_Down:
+        if (CheckForMovement()){
+            if (!CheckForCollision()){
+                move();
+            } else StopAllMovement();
+        }
     }
     update();
 }
