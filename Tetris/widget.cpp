@@ -21,7 +21,70 @@ Widget::~Widget()
 {
     delete ui;
 }
+void Widget::Row(){
+    //проверяем, есть ли заполненный ряд
+    bool lolkek=false;
+    bool goidap=true;
+    for (int i=0; i<20; i++){
+        goidap=true;
+        for (int j=0; j<10; j++){
+            goidap=goidap&&goida[i][j]->IsColidable;
+        }
+        lolkek=lolkek||goidap;
+    }
+    //qDebug()<<"Maybe SMTH?";
+    if (!lolkek) return;
 
+
+    //У нас точно есть заполненный ряд
+
+    while (lolkek){
+        int sbdeleted;
+        qDebug()<<"SOMETHING SHOULD BE DELETED";
+        for (int i=0; i<20; i++){
+            goidap=true;
+            for (int j=0; j<10; j++){
+                goidap=goidap&&goida[i][j]->IsColidable;
+            }
+            if (goidap) {
+                sbdeleted=i;
+                break;
+            }
+
+        }
+        qDebug()<<"Ok1?";
+        qDebug()<<(sbdeleted);
+        //мы нашли строчку, которую надо бы удалить
+        for (int j=0; j<10; j++){
+            goida[sbdeleted][j]= new Box(false, false, Qt::white);
+        }
+
+        //мы вроде бы ее удалили
+        qDebug()<<"Ok2?";
+        for(int i=sbdeleted-1; i>=0; i--){
+            for (int j=0; j<10; j++){
+                if (goida[i][j]->IsColidable){
+                    goida[i+1][j]=new Box(goida[i][j]);
+                    goida[i][j]=new Box(false, false, Qt::white);
+                }
+            }
+        }
+        //мы вроде бы все сместили
+
+        qDebug()<<"Ok3";
+        lolkek=false;
+        goidap=true;
+        for (int i=0; i<20; i++){
+            goidap=true;
+            for (int j=0; j<10; j++){
+                goidap=goidap&&goida[i][j]->IsColidable;
+            }
+            lolkek=lolkek||goidap;
+        }
+        //Есть ли еще заполненные? Если да, то повторяем, если нет, то цикл прерывается.
+    }
+
+}
 bool Widget::CheckForMovement(){
     for (int i=0; i<20; i++) {
         for (int j=0; j<10; j++){
@@ -62,7 +125,6 @@ void Widget::move(){
             if (goida[i][j]->IsMoving) {
                 goida[i+1][j]=new Box(goida[i][j]);
                 goida[i][j]=new Box(false, false, Qt::white);
-
             }
 
         }
@@ -89,7 +151,6 @@ void Widget::keyPressEvent(QKeyEvent *event) {
 void Widget::fullrotate(){
     int minx=10, maxx=-1;
     int miny=20, maxy=-1;
-    qDebug()<<"fullrotatenachinaetsya";
     for (int i=0; i<20; i++){
         for (int j=0; j<10; j++){
             if (goida[i][j]->IsMoving){
@@ -103,13 +164,10 @@ void Widget::fullrotate(){
     int w=maxx-minx;
     int h=maxy-miny;
     if (w>h) h=w; else w=h;
-    //w=max(w, h);
-    //h=max(w, h);
     maxx=minx+w;
     maxy=miny+h;
     w++;
     h++;
-    qDebug()<<"Checpont 1; maxx = "+QString::number(maxx)+" maxy = "+QString::number(maxy)+" h = "+QString::number(h)+" is h==w "+QString::number(h==w)+" minx = "+QString::number(minx)+" miny = "+QString::number(miny);
     if (maxx<minx || maxy<miny) return;
     QVector<QVector<Box*>> antigoida;
     antigoida.resize(h);
@@ -123,31 +181,13 @@ void Widget::fullrotate(){
         antigoida[i].resize(w);
         for (int j=0; j<w; j++){
             antigoida[i][j]=new Box(goida[miny+i][minx+j]);
-            //qDebug()<<antigoida[i][j]->IsMoving;
-            //qDebug()<<goida[miny+i][minx+j]->IsMoving;
         }
     }
     //переворот антигойды
-    qDebug()<<"Figure was on:";
-    /*for (int i=0; i<h; i++){
-        for (int j=0; j<i; j++){
-            if (antigoida[i][j]->IsMoving) qDebug()<<QString::number(i)+" "+QString::number(j);
-
-            if (!((antigoida[i][j]->IsMoving && antigoida[j][i]->IsColidable) || (antigoida[j][i]->IsMoving && antigoida[i][j]->IsColidable))){
-
-                if (!antigoida[i][j]->IsColidable && !antigoida[j][i]->IsColidable) {
-                    Box* tmp=new Box(antigoida[i][j]);
-                    antigoida[i][j]=new Box(antigoida[j][i]); //qDebug()<<"Copied";
-                    antigoida[j][i]=new Box(tmp);
-                }
-            } else return;
-        }
-    }*/
     for (int i=0;i<w/2;i++)
     {
         for (int j=i;j<w-i-1;j++)
         {
-            // Swapping elements after each iteration in Clockwise direction
             Box* temp=new Box(antigoida[i][j]);
             antigoida[i][j]=new Box(antigoida[w-1-j][i]);
             antigoida[w-1-j][i]=new Box(antigoida[w-1-i][w-1-j]);
@@ -155,19 +195,11 @@ void Widget::fullrotate(){
             antigoida[j][w-1-i]=new Box(temp);
         }
     }
-    qDebug()<<"Figure now on:";
-    for (int i=0; i<h; i++){
-        for (int j=0; j<w; j++){
-            if (antigoida[i][j]->IsMoving) qDebug()<<QString::number(i)+" "+QString::number(j);
-        }
-    }
-    //qDebug()<<"Checkpoint 3";
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             goida[miny+i][minx+j] = new Box(antigoida[i][j]);
         }
     }
-    //qDebug()<<"Free at last";
 
 
 
@@ -203,6 +235,7 @@ void Widget::moveright(){
     }
 }
 void Widget::tick(){
+    Row();
     if (CheckForMovement()){
         if (!CheckForCollision()){
             move();
@@ -211,11 +244,12 @@ void Widget::tick(){
         CreateNewFigure();
     }
     this->repaint();
+
+
     //qDebug() << "slot is trigerred";
 }
 
 void Widget::CreateNewFigure(){
-    qDebug() << "Creation trgt";
     QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
     int clo=rand()%7;
     if (clo == 0) { //куб
@@ -254,7 +288,7 @@ void Widget::CreateNewFigure(){
         goida[1][6]=new Box(true, false, ThatOneColor);
         goida[0][7]=new Box(true, false, ThatOneColor);
     }
-    //qDebug()<<goida[0][5]->color;
+
 }
 
 void Widget::paintEvent(QPaintEvent *event){

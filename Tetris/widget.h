@@ -35,6 +35,7 @@ public:
     void moveright(); //направа
     void fullrotate();
     bool CheckForCollision();
+    void Row();
 
 protected:
     //void mousePressEvent(QMouseEvent * e);
