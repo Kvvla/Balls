@@ -51,7 +51,6 @@ void Widget::Row(){
             }
 
         }
-        qDebug()<<(sbdeleted);
         //мы нашли строчку, которую надо бы удалить
         for (int j=0; j<10; j++){
             goida[sbdeleted][j]= new Box(false, false, Qt::white);

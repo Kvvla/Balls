@@ -4,7 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-    qDebug()<<"Goida???";
     QApplication a(argc, argv);
     Widget w;
     w.show();
