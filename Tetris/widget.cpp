@@ -14,7 +14,7 @@ Widget::Widget(QWidget *parent)
         }
     }
     connect(&timer, SIGNAL(timeout()), this, SLOT(tick()));
-    timer.start(500);
+    timer.start(300);
 }
 
 Widget::~Widget()
@@ -211,9 +211,17 @@ void Widget::moveleft(){
     for(int i=0; i<20; i++){
         if (goida[i][0]->IsMoving) return;
     }
-    for(int i=1; i<20; i++){
-        for (int j=0;j<10; j++){
-            if (goida[i][j]->IsMoving&&!goida[i][j-1]->IsColidable){
+    bool CollisionCheck=false;
+    for(int i=0; i<20; i++){
+        for (int j=1;j<10; j++){
+
+            CollisionCheck=goida[i][j]->IsMoving&&goida[i][j-1]->IsColidable||CollisionCheck;
+        }
+    }
+    if (CollisionCheck) return;
+    for(int i=0; i<20; i++){
+        for (int j=1;j<10; j++){
+            if (goida[i][j]->IsMoving&&!goida[i][j-1]->IsColidable&&!goida[i][j-1]->IsMoving){
                 goida[i][j-1]=new Box(goida[i][j]);
                 goida[i][j]=new Box(false, false, Qt::white);
             }
@@ -225,9 +233,17 @@ void Widget::moveright(){
     for(int i=0; i<20; i++){
         if (goida[i][9]->IsMoving) return;
     }
+    bool CollisionCheck=false;
+    for(int i=1; i<20; i++){
+        for (int j=8;j>=0; j--){
+
+            CollisionCheck=goida[i][j]->IsMoving&&goida[i][j+1]->IsColidable||CollisionCheck;
+        }
+    }
+    if (CollisionCheck) return;
     for(int i=0; i<20; i++){
         for (int j=8;j>=0; j--){
-            if (goida[i][j]->IsMoving&&!goida[i][j+1]->IsColidable){
+            if (goida[i][j]->IsMoving&&!goida[i][j+1]->IsColidable&&!goida[i][j+1]->IsMoving){
                 goida[i][j+1]=new Box(goida[i][j]);
                 goida[i][j]=new Box(false, false, Qt::white);
             }
