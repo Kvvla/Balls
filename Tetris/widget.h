@@ -36,6 +36,8 @@ public:
     void fullrotate();
     bool CheckForCollision();
     void Row();
+    bool CheckForEnd();
+    int score = 0;
 
 protected:
     //void mousePressEvent(QMouseEvent * e);

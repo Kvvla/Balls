@@ -6,7 +6,7 @@ Widget::Widget(QWidget *parent)
 {
     ui->setupUi(this);
     goida.resize(20);
-
+    this->setLayout(this->ui->gridLayout);
     for (int i=0; i<20; i++) {
         goida[i].resize(10);
         for (int j=0; j<10; j++){
@@ -20,6 +20,14 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
     delete ui;
+}
+bool Widget::CheckForEnd(){
+    for (int i=0; i<10; i++){
+        if (goida[0][i]->IsColidable){
+            return true;
+        }
+    }
+    return false;
 }
 void Widget::Row(){
     //проверяем, есть ли заполненный ряд
@@ -66,6 +74,7 @@ void Widget::Row(){
             }
         }
         //мы вроде бы все сместили
+        score+=100;
         lolkek=false;
         goidap=true;
         for (int i=0; i<20; i++){
@@ -112,7 +121,7 @@ void Widget::StopAllMovement(){
 }
 void Widget::move(){
     //qDebug() << "Move trgt";
-
+    score++;
     for (int i=19; i>=0; i--){
         for (int j=0; j<10; j++){
 
@@ -251,6 +260,11 @@ void Widget::moveright(){
     }
 }
 void Widget::tick(){
+    this->ui->lcdNumber->display(score);
+    if (CheckForEnd()){
+        this->close();
+        qDebug()<<"End of Game";
+    }
     Row();
     if (CheckForMovement()){
         if (!CheckForCollision()){
@@ -315,7 +329,7 @@ void Widget::paintEvent(QPaintEvent *event){
     for (int i=0; i<20; i++) {
         for (int j=0; j<10; j++){
             painter.setBrush(goida[i][j]->color);
-            painter.drawRect(j*40, i*40, 40, 40);
+            painter.drawRect(j*20, i*20, 20, 20);
         }
     }
 }

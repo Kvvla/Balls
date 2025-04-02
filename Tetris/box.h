@@ -9,7 +9,7 @@ public:
     Box(Box* x);
     //int x;
     //int y;
-    int size=40;
+    int size=20;
     bool IsMoving;
     bool IsColidable;
     QColor color;
