@@ -192,18 +192,35 @@ void Widget::fullrotate(){
             antigoida[i][j]=new Box(goida[miny+i][minx+j]);
         }
     }
-    //переворот антигойды
     for (int i=0;i<w/2;i++)
     {
         for (int j=i;j<w-i-1;j++)
         {
+
+            if (!(antigoida[i][j]->IsColidable || antigoida[w-1-j][i]->IsColidable || antigoida[w-1-i][w-1-j]->IsColidable || antigoida[j][w-1-i]->IsColidable)){
+                Box* temp=new Box(antigoida[i][j]);
+                antigoida[i][j]=new Box(antigoida[w-1-j][i]);
+                antigoida[w-1-j][i]=new Box(antigoida[w-1-i][w-1-j]);
+                antigoida[w-1-i][w-1-j]=new Box(antigoida[j][w-1-i]);
+                antigoida[j][w-1-i]=new Box(temp);
+            }
+            else return;
+        }
+    }
+
+    //переворот антигойды
+    /*for (int i=0;i<w/2;i++)
+    {
+        for (int j=i;j<w-i-1;j++)
+        {
+
             Box* temp=new Box(antigoida[i][j]);
             antigoida[i][j]=new Box(antigoida[w-1-j][i]);
             antigoida[w-1-j][i]=new Box(antigoida[w-1-i][w-1-j]);
             antigoida[w-1-i][w-1-j]=new Box(antigoida[j][w-1-i]);
             antigoida[j][w-1-i]=new Box(temp);
         }
-    }
+    }*/
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             goida[miny+i][minx+j] = new Box(antigoida[i][j]);
