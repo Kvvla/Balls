@@ -300,36 +300,43 @@ void Widget::CreateNewFigure(){
     QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
     int clo=rand()%7;
     if (clo == 0) { //куб
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[1][6]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[1][5]=new Box(true, false, ThatOneColor);
         goida[1][6]=new Box(true, false, ThatOneColor);
     } else if (clo==1){ //Г
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[2][5]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[1][5]=new Box(true, false, ThatOneColor);
         goida[2][5]=new Box(true, false, ThatOneColor);
     } else if (clo==2){ //Г наоборот
+        if (goida[0][5]->IsColidable || goida[0][4]-> IsColidable || goida[1][5]->IsColidable ||goida[2][5]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][4]=new Box(true, false, ThatOneColor);
         goida[1][5]=new Box(true, false, ThatOneColor);
         goida[2][5]=new Box(true, false, ThatOneColor);
     } else if (clo==3){ //s
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][6]->IsColidable ||goida[1][7]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[1][6]=new Box(true, false, ThatOneColor);
         goida[1][7]=new Box(true, false, ThatOneColor);
     } else if (clo==4){ //z
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[1][4]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[1][5]=new Box(true, false, ThatOneColor);
         goida[1][4]=new Box(true, false, ThatOneColor);
     } else if (clo==5){ //ПАЛКА
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[0][7]->IsColidable ||goida[0][8]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[0][7]=new Box(true, false, ThatOneColor);
         goida[0][8]=new Box(true, false, ThatOneColor);
     } else if (clo==6){ //T
+        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][6]->IsColidable ||goida[0][7]->IsColidable) {this->close(); qDebug()<<"End";}
         goida[0][5]=new Box(true, false, ThatOneColor);
         goida[0][6]=new Box(true, false, ThatOneColor);
         goida[1][6]=new Box(true, false, ThatOneColor);
