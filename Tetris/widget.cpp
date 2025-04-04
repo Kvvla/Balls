@@ -302,7 +302,7 @@ void Widget::CreateNewFigure(){
     for(int i=0; i<4; i++){
         for(int j=0; j<4; j++){
             if (NextFigure[i][j]->IsMoving){
-                if (goida[i][j+5]->IsColidable) {IsLost=true; qDebug()<<"End";}
+                if (goida[i][j+5]->IsColidable) IsLost=true;
                 goida[i][j+5]=new Box(NextFigure[i][j]);
                 NextFigure[i][j]=new Box(false, false, Qt::white);
 
@@ -353,7 +353,7 @@ void Widget::CreateNewFigure(){
         for(int i=0; i<4; i++){
             for(int j=0; j<4; j++){
                 if (NextFigure[i][j]->IsMoving){
-                    if (goida[i][j+5]->IsColidable) {IsLost=true; qDebug()<<"End";}
+                    if (goida[i][j+5]->IsColidable) IsLost=true;
                     goida[i][j+5]=new Box(NextFigure[i][j]);
                     NextFigure[i][j]=new Box(false, false, Qt::white);
 
@@ -416,15 +416,18 @@ void Widget::paintEvent(QPaintEvent *event){
         }
     }
 
-    for (int i=0; i<4; i++){
-        for (int j=0; j<4; j++){
-            painter.setBrush(NextFigure[i][j]->color);
-            painter.drawRect(220+j*20, 220+i*20, 20, 20);
+        for (int i=0; i<4; i++){
+            for (int j=0; j<4; j++){
+                painter.setBrush(NextFigure[i][j]->color);
+                painter.drawRect(220+j*20, 220+i*20, 20, 20);
+            }
         }
     }
-    }
     else{
-        painter.drawText(0, this->height()/2, this->width(), this->height(), 5, "GameIsOver");
+        painter.setBrush(Qt::white);
+        painter.drawRect(0, 0, this->width(), this->height());
+        painter.drawText(0, this->height()/2, this->width(), this->height(), 5, "Game Is Over");
+        timer.stop();
     }
 
 }
