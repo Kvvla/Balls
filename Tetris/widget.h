@@ -22,9 +22,9 @@ class Widget : public QWidget
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
-
+    bool IsLost=false;
     QVector<QVector<Box*>> goida;//основной список блоков
-
+    bool firstmove=true;
     void move(); // движение вниз
     bool CheckForMovement(); // проверка на движ
     void CreateNewFigure(); // создание фигры
@@ -38,6 +38,7 @@ public:
     void Row();
     bool CheckForEnd();
     int score = 0;
+    QVector<QVector<Box*>> NextFigure;
 
 protected:
     //void mousePressEvent(QMouseEvent * e);

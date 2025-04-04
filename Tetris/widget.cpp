@@ -1,11 +1,21 @@
 #include "widget.h"
 #include "ui_widget.h"
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Widget)
 {
+
     ui->setupUi(this);
     goida.resize(20);
+    NextFigure.resize(4);
+    //qDebug()<<"OK1";
+    for (int i=0; i<4; i++){
+        NextFigure[i].resize(4);
+        for (int j=0; j<4; j++){
+            NextFigure[i][j]=new Box(false, false, Qt::white);
+        }
+    }
     this->setLayout(this->ui->gridLayout);
     for (int i=0; i<20; i++) {
         goida[i].resize(10);
@@ -137,22 +147,34 @@ void Widget::move(){
 void Widget::keyPressEvent(QKeyEvent *event) {
     switch (event->key()) {
     case Qt::Key_Left:
-
+if (timer.isActive()){
         moveleft();
+}
         break;
     case Qt::Key_Right:
+        if (timer.isActive()){
         moveright();
-
+        }
         break;
     case Qt::Key_Up:
-
+        if (timer.isActive()){
         fullrotate();
+        }
         break;
     case Qt::Key_Down:
+        if (timer.isActive()){
         if (CheckForMovement()){
             if (!CheckForCollision()){
                 move();
             } else StopAllMovement();
+        }}
+        break;
+
+    case Qt::Key_Space:
+        if (timer.isActive()){
+            timer.stop();
+        }else{
+            timer.start(300);
         }
     }
     update();
@@ -207,20 +229,6 @@ void Widget::fullrotate(){
             else return;
         }
     }
-
-    //переворот антигойды
-    /*for (int i=0;i<w/2;i++)
-    {
-        for (int j=i;j<w-i-1;j++)
-        {
-
-            Box* temp=new Box(antigoida[i][j]);
-            antigoida[i][j]=new Box(antigoida[w-1-j][i]);
-            antigoida[w-1-j][i]=new Box(antigoida[w-1-i][w-1-j]);
-            antigoida[w-1-i][w-1-j]=new Box(antigoida[j][w-1-i]);
-            antigoida[j][w-1-i]=new Box(temp);
-        }
-    }*/
     for (int i=0; i<h; i++){
         for (int j=0; j<w; j++){
             goida[miny+i][minx+j] = new Box(antigoida[i][j]);
@@ -278,10 +286,7 @@ void Widget::moveright(){
 }
 void Widget::tick(){
     this->ui->lcdNumber->display(score);
-    if (CheckForEnd()){
-        this->close();
-        qDebug()<<"End of Game";
-    }
+    IsLost = CheckForEnd();
     Row();
     if (CheckForMovement()){
         if (!CheckForCollision()){
@@ -291,56 +296,109 @@ void Widget::tick(){
         CreateNewFigure();
     }
     this->repaint();
-
-
-    //qDebug() << "slot is trigerred";
 }
 
 void Widget::CreateNewFigure(){
+    for(int i=0; i<4; i++){
+        for(int j=0; j<4; j++){
+            if (NextFigure[i][j]->IsMoving){
+                if (goida[i][j+5]->IsColidable) {IsLost=true; qDebug()<<"End";}
+                goida[i][j+5]=new Box(NextFigure[i][j]);
+                NextFigure[i][j]=new Box(false, false, Qt::white);
+
+            }
+        }
+    }
     QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
+
     int clo=rand()%7;
     if (clo == 0) { //куб
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[1][6]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[1][5]=new Box(true, false, ThatOneColor);
-        goida[1][6]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[1][0]=new Box(true, false, ThatOneColor);
+        NextFigure[1][1]=new Box(true, false, ThatOneColor);
     } else if (clo==1){ //Г
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[2][5]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[1][5]=new Box(true, false, ThatOneColor);
-        goida[2][5]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[1][0]=new Box(true, false, ThatOneColor);
+        NextFigure[2][0]=new Box(true, false, ThatOneColor);
     } else if (clo==2){ //Г наоборот
-        if (goida[0][5]->IsColidable || goida[0][4]-> IsColidable || goida[1][5]->IsColidable ||goida[2][5]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][4]=new Box(true, false, ThatOneColor);
-        goida[1][5]=new Box(true, false, ThatOneColor);
-        goida[2][5]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[1][1]=new Box(true, false, ThatOneColor);
+        NextFigure[2][1]=new Box(true, false, ThatOneColor);
     } else if (clo==3){ //s
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][6]->IsColidable ||goida[1][7]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[1][6]=new Box(true, false, ThatOneColor);
-        goida[1][7]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[1][1]=new Box(true, false, ThatOneColor);
+        NextFigure[1][2]=new Box(true, false, ThatOneColor);
     } else if (clo==4){ //z
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][5]->IsColidable ||goida[1][4]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[1][5]=new Box(true, false, ThatOneColor);
-        goida[1][4]=new Box(true, false, ThatOneColor);
+        NextFigure[1][0]=new Box(true, false, ThatOneColor);
+        NextFigure[1][1]=new Box(true, false, ThatOneColor);
+        NextFigure[0][2]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
     } else if (clo==5){ //ПАЛКА
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[0][7]->IsColidable ||goida[0][8]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[0][7]=new Box(true, false, ThatOneColor);
-        goida[0][8]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[0][2]=new Box(true, false, ThatOneColor);
+        NextFigure[0][3]=new Box(true, false, ThatOneColor);
     } else if (clo==6){ //T
-        if (goida[0][5]->IsColidable || goida[0][6]-> IsColidable || goida[1][6]->IsColidable ||goida[0][7]->IsColidable) {this->close(); qDebug()<<"End";}
-        goida[0][5]=new Box(true, false, ThatOneColor);
-        goida[0][6]=new Box(true, false, ThatOneColor);
-        goida[1][6]=new Box(true, false, ThatOneColor);
-        goida[0][7]=new Box(true, false, ThatOneColor);
+        NextFigure[0][0]=new Box(true, false, ThatOneColor);
+        NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        NextFigure[1][1]=new Box(true, false, ThatOneColor);
+        NextFigure[0][2]=new Box(true, false, ThatOneColor);
+    }
+    if (firstmove){
+        firstmove=false;
+        for(int i=0; i<4; i++){
+            for(int j=0; j<4; j++){
+                if (NextFigure[i][j]->IsMoving){
+                    if (goida[i][j+5]->IsColidable) {IsLost=true; qDebug()<<"End";}
+                    goida[i][j+5]=new Box(NextFigure[i][j]);
+                    NextFigure[i][j]=new Box(false, false, Qt::white);
+
+                }
+            }
+        }
+        QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
+        int clo=rand()%7;
+        if (clo == 0) { //куб
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[1][0]=new Box(true, false, ThatOneColor);
+            NextFigure[1][1]=new Box(true, false, ThatOneColor);
+        } else if (clo==1){ //Г
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[1][0]=new Box(true, false, ThatOneColor);
+            NextFigure[2][0]=new Box(true, false, ThatOneColor);
+        } else if (clo==2){ //Г наоборот
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[1][1]=new Box(true, false, ThatOneColor);
+            NextFigure[2][1]=new Box(true, false, ThatOneColor);
+        } else if (clo==3){ //s
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[1][1]=new Box(true, false, ThatOneColor);
+            NextFigure[1][2]=new Box(true, false, ThatOneColor);
+        } else if (clo==4){ //z
+            NextFigure[1][0]=new Box(true, false, ThatOneColor);
+            NextFigure[1][1]=new Box(true, false, ThatOneColor);
+            NextFigure[0][2]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+        } else if (clo==5){ //ПАЛКА
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[0][2]=new Box(true, false, ThatOneColor);
+            NextFigure[0][3]=new Box(true, false, ThatOneColor);
+        } else if (clo==6){
+            NextFigure[0][0]=new Box(true, false, ThatOneColor);
+            NextFigure[0][1]=new Box(true, false, ThatOneColor);
+            NextFigure[1][1]=new Box(true, false, ThatOneColor);
+            NextFigure[0][2]=new Box(true, false, ThatOneColor);
+        }
+
     }
 
 }
@@ -350,12 +408,25 @@ void Widget::paintEvent(QPaintEvent *event){
     //qDebug() << "PaintTRGT";
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setPen(Qt::black);
+    if (!IsLost){
     for (int i=0; i<20; i++) {
         for (int j=0; j<10; j++){
             painter.setBrush(goida[i][j]->color);
             painter.drawRect(j*20, i*20, 20, 20);
         }
     }
+
+    for (int i=0; i<4; i++){
+        for (int j=0; j<4; j++){
+            painter.setBrush(NextFigure[i][j]->color);
+            painter.drawRect(220+j*20, 220+i*20, 20, 20);
+        }
+    }
+    }
+    else{
+        painter.drawText(0, this->height()/2, this->width(), this->height(), 5, "GameIsOver");
+    }
+
 }
 
 void Widget::rotate(int ipivot, int jpivot, int i2, int j2){
