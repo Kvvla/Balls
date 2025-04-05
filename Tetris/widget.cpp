@@ -309,7 +309,7 @@ void Widget::CreateNewFigure(){
             }
         }
     }
-    QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
+    QColor ThatOneColor= QColor::fromRgb(rand()%255, rand()%255, rand()%255);
 
     int clo=rand()%7;
     if (clo == 0) { //куб
@@ -360,7 +360,7 @@ void Widget::CreateNewFigure(){
                 }
             }
         }
-        QColor ThatOneColor= QColor::QColor(rand()%255, rand()%255, rand()%255);
+        QColor ThatOneColor= QColor::fromRgb(rand()%255, rand()%255, rand()%255);
         int clo=rand()%7;
         if (clo == 0) { //куб
             NextFigure[0][0]=new Box(true, false, ThatOneColor);
